@@ -114,7 +114,8 @@ with tc:
                     df_filtered["WW"].iloc[x] = 1 if df_filtered["Winner's score"].iloc[x] > (df_filtered["Loser's score"].iloc[x] + 2) else 0
                 
                 with foc:
-                    df_filtered
+                    pass
+                    # df_filtered
 
                 wins = len(df_filtered[df_filtered["Winner"] == winner])
                 losses = len(df_filtered) - wins
