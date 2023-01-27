@@ -44,7 +44,7 @@ def save_record(record):
                             (record["Winner"], record["Winner's score"], record["Loser's score"], record["Loser"]))
                             
         # df_records.append(record, ignore_index=True)
-        st.write("Button was clicked!")
+        st.write("Record Saved. Please do not overclick. Click once then wait!")
         # st.session_state.first_name = players[0]
 
 def delete_record():    
@@ -87,10 +87,13 @@ df_records.drop(['id'], axis = 1, inplace = True)
 fc, sc, tc, foc = st.columns([0.45, 0.1, 0.1, 0.45])
 lolo = "sfsf"
 with fc:
-    df_records = df_records.sort_index(ascending=False)
-    df_records
-    if st.button("Delete last record"):
-        delete_record()
+    all_records_expander = st.expander("ALL RECORDS")
+    with all_records_expander:
+        df_records = df_records.sort_index(ascending=False)
+        df_records
+        if st.button("Delete last record"):
+            # sql_cursor.execute("""DELETE FROM records""")
+            delete_record()
 with sc:
     pass
 with tc:
@@ -150,12 +153,19 @@ with tc:
     goals_FA
 
 
-df_log
-df_points
-df_logg = df_points.groupby("Winner", as_index=False)["Win/Loss", "Goals F/A", "WW F/A"].sum()
-df_logg["Total"] = df_logg["Win/Loss"] + df_logg["Goals F/A"] + df_logg["WW F/A"]
-df_logg = df_logg.sort_values(by=['Total'], ascending=False)
-df_logg                    
+# df_log
+player_vs_player_expander = st.expander("PLAYER VS PLAYER RECORDS")
+with player_vs_player_expander:
+    df_points
+
+with foc:
+    log_expander = st.expander("THE LOG")
+    with log_expander:
+        df_logg = df_points.groupby("Winner", as_index=False)["Win/Loss", "Goals F/A", "WW F/A"].sum()
+        df_logg["Total"] = df_logg["Win/Loss"] + df_logg["Goals F/A"] + df_logg["WW F/A"]
+        df_logg = df_logg.sort_values(by=['Total'], ascending=False)
+        df_logg                    
+
 
 
 conn.commit()
