@@ -52,6 +52,28 @@ def delete_record():
                             
         st.write("Record Deleted!")
 
+def color_red(val):
+    color = 'red' if val == 1 else 'black'
+    return 'color: %s' % color
+
+# Define the custom function
+def highlight_row(row):
+    if row["Winner's score"] > (row["Loser's score"] + 2): 
+        css = 'background-color: green'
+    else:
+        css = 'background-color: black'
+
+    return [css] * len(row)
+    # is_one = s == 1
+    # return ['background-color: lightgreen' if v else '' for v in is_one]    
+
+def startIndexAtOne(df):
+    # Create a new index
+    new_index = [i + 1 for i in range(len(df))]
+    # Reassign the new index to the DataFrame
+    df.index = new_index
+    # return df
+
 
 # ---- SIDEBAR ----
 # st.sidebar.header("Please Filter Here:")
@@ -83,26 +105,28 @@ query = 'SELECT * FROM records'
 # Read the query results into a DataFrame
 df_records = pd.read_sql_query(query, conn)
 df_records.drop(['id'], axis = 1, inplace = True) 
+df_records["Winner's score"] = df_records["Winner's score"].astype(int)
+df_records["Loser's score"] = df_records["Loser's score"].astype(int)
+df_records['WW'] = 1 
+startIndexAtOne(df_records)
+df_records = df_records.sort_index(ascending=False)
+
+
+for x in range(len(df_records)):
+    df_records["WW"].iloc[x] = 1 if df_records["Winner's score"].iloc[x] > (df_records["Loser's score"].iloc[x] + 2) else 0
+                
+# df_records.style.applymap(color_red, subset="WW" )   
 
 fc, sc, tc, foc = st.columns([0.45, 0.1, 0.1, 0.45])
 lolo = "sfsf"
 with fc:
-    all_records_expander = st.expander("ALL RECORDS")
-    with all_records_expander:
-        df_records = df_records.sort_index(ascending=False)
-        df_records
-        if st.button("Delete last record"):
-            # sql_cursor.execute("""DELETE FROM records""")
-            delete_record()
+    pass
 with sc:
     pass
 with tc:
     pass
 with foc:
     pass
-
-df_records["Winner's score"] = df_records["Winner's score"].astype(int)
-df_records["Loser's score"] = df_records["Loser's score"].astype(int)
 
 with tc:
     for winner in players:
@@ -111,10 +135,6 @@ with tc:
                 pass
             else:
                 df_filtered = df_records[(df_records["Winner"].isin([winner, loser])) & (df_records["Loser"].isin([winner, loser]))][-10:]
-                
-                df_filtered['WW'] = 1 
-                for x in range(len(df_filtered)):
-                    df_filtered["WW"].iloc[x] = 1 if df_filtered["Winner's score"].iloc[x] > (df_filtered["Loser's score"].iloc[x] + 2) else 0
                 
                 with foc:
                     pass
@@ -148,7 +168,7 @@ with tc:
 
                 # print(record)
 
-                new_df = pd.DataFrame([record])  
+                new_df = pd.DataFrame([record])
                 df_points = pd.concat([df_points, new_df], axis=0, ignore_index=True)
     goals_FA
 
@@ -156,6 +176,7 @@ with tc:
 # df_log
 player_vs_player_expander = st.expander("PLAYER VS PLAYER RECORDS")
 with player_vs_player_expander:
+    startIndexAtOne(df_points)
     df_points
 
 with foc:
@@ -164,7 +185,20 @@ with foc:
         df_logg = df_points.groupby("Winner", as_index=False)["Win/Loss", "Goals F/A", "WW F/A"].sum()
         df_logg["Total"] = df_logg["Win/Loss"] + df_logg["Goals F/A"] + df_logg["WW F/A"]
         df_logg = df_logg.sort_values(by=['Total'], ascending=False)
-        df_logg                    
+        startIndexAtOne(df_logg)
+        df_logg    
+
+# Apply the custom function to the DataFrame
+df_records.drop(['WW'], axis = 1, inplace = True) 
+styled_df_records = df_records.style.apply(highlight_row, axis=1)
+
+with fc:
+    all_records_expander = st.expander("ALL RECORDS")
+    with all_records_expander:
+        styled_df_records
+        if st.button("Delete last record"):
+            # sql_cursor.execute("""DELETE FROM records""")
+            delete_record()                        
 
 
 
