@@ -2,10 +2,21 @@ import pandas as pd  # pip install pandas openpyxl
 import plotly.express as px  # pip install plotly-express
 import streamlit as st  # pip install streamlit
 import sqlite3
+import shutil
+import datetime
+import ftplib
+import os
 
 from streamlit import components
 
 st.set_page_config(page_title="FIFA 19 Records", page_icon=":bar_chart:", layout="wide")
+
+#GETTING CURRENT DATE
+date_format = "%d/%m/%Y %H:%M"
+now = datetime.datetime.now().strftime(date_format)
+now = now.replace("/", "")
+now = now.replace(" ", "_")
+now = now.replace(":", "")
 
 players = [" ", "DC", "Moose", "Amos", "Tuti", "Keda", "Berto", "Kevy"]
 
@@ -74,6 +85,9 @@ def startIndexAtOne(df):
     df.index = new_index
     # return df
 
+#BACKUP DB 
+def backup_DB():
+    shutil.copy2('fifa.db', f'db_backups/fifa_{now}.db')
 
 # ---- SIDEBAR ----
 # st.sidebar.header("Please Filter Here:")
@@ -97,6 +111,7 @@ if st.button("Save record"):
              "Winner's score": first_score, 
              "Loser's score": second_score, 
              'Loser': second_name}
+    backup_DB()
     save_record(record)
 
 #get sqlite db into df
@@ -198,12 +213,17 @@ with fc:
         styled_df_records
         if st.button("Delete last record"):
             # sql_cursor.execute("""DELETE FROM records""")
+            backup_DB()
             delete_record()                        
 
 
 
 conn.commit()
 conn.close()
+
+
+
+
 
 
 # ---- HIDE STREAMLIT STYLE ----
