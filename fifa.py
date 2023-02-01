@@ -9,6 +9,31 @@ import os
 import numba
 
 from streamlit import components
+# from google.oauth2.credentials import Credentials
+# from googleapiclient.discovery import build
+
+# #google drive
+# creds = Credentials.from_authorized_user_file("client_secret_235904585131-2mtqpfk9oqvqfof1pmqnrco0s4rhh77v.apps.googleusercontent.com.json")
+# drive_service = build('drive', 'v3', credentials=creds)
+
+# # create a folder
+# folder_name = 'fifa_folder'
+# try:
+#     mimetype = 'application/vnd.google-apps.folder'
+#     file_metadata = {'name': folder_name, 'mimeType': mimetype}
+#     folder = drive_service.files().create(body=file_metadata, fields='id').execute()
+#     print(F'Folder has been created with Name "{folder_name}" and URL: "https://drive.google.com/drive/folders/{folder.get("id")}".')
+# except HttpError as error:
+#     print(F'An error occurred while creating the folder: {error}')
+#     folder = None
+
+# # upload file
+# file_name = 'example.txt'
+# file_metadata = {'name': file_name, 'parents':[folder.get("id")]}
+# media = MediaFileUpload(file_name, mimetype='text/plain')
+# file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+# print(F'File ID: {file.get("id")}')
+
 
 st.set_page_config(page_title="FIFA 19 Records", page_icon=":bar_chart:", layout="wide")
 
@@ -156,11 +181,17 @@ def wholeApp():
                 if winner == loser or winner == " " or loser == " ": # or players.index(winner) > players.index(loser)
                     pass
                 else:
-                    df_filtered = df_records[(df_records["Winner"].isin([winner, loser])) & (df_records["Loser"].isin([winner, loser]))][-10:]
+                    df_filtered = df_records[(df_records["Winner"].isin([winner, loser])) & (df_records["Loser"].isin([winner, loser]))][0:10]
                     
-                    with foc:
+                    with sc:
                         pass
+                        # winner
+                        # loser
+                        # leng = len(df_filtered)
+                        # leng
                         # df_filtered
+                        # df_filtered[0:10]    #.iloc[0:10]
+                        # exit()
 
                     wins = len(df_filtered[df_filtered["Winner"] == winner])
                     losses = len(df_filtered) - wins
@@ -177,16 +208,16 @@ def wholeApp():
                     record = ({
                         'Winner': winner, 
                         "Wins": wins,
-                            'Loser': loser,
-                                "Losses" : losses,
-                            "Win/Loss": WL_RATIO, 
-                            "Goals F/A": goals_FA, 
-                            "Goals For": goals_for, 
-                            "Goals Against": goals_against, 
-                            "WW F/A": WW_FA,
-                            "WW For": WW_for,
-                            "WW Against": WW_against,
-                            })
+                        'Loser': loser,
+                        "Losses" : losses,
+                        "Win/Loss": WL_RATIO, 
+                        "Goals F/A": goals_FA, 
+                        "Goals For": goals_for, 
+                        "Goals Against": goals_against, 
+                        "WW F/A": WW_FA,
+                        "WW For": WW_for,
+                        "WW Against": WW_against,
+                        })
 
                     # print(record)
 
