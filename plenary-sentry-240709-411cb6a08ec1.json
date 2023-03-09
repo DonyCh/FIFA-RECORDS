@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "plenary-sentry-240709",
+  "private_key_id": "411cb6a08ec1ba3126e348b0bbf6598ede2e975a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDXD4dfonbAuCze\nsyGfuagmlMXsqptEbSFo6tw65Gel7p1LeXEDnh1CJV0eT1UzJy7A1hkBwv5Jqf6S\ng6+gdJ9jHF6jNrFuAbos1r+Cs//4XQtVpHaat+p40hMdpoaKiKDIb430sh/aA1eQ\nv+OkGzlwdvzNcvosqtCVjORdEfK+yZah75qXqFPJSWxnxSu3eBCinmYlXmqF3VPp\nTim2bKVTt7O/+GmichC2PAPRVmAmOlUrjq48vkFzQQT3v3OBTZvhbSkM3IHTe8N7\napNlN8pDqcO0rsL0gvzlzPJw2Q8z44lD+l21e1AS74Okfj/rzUDEg6+RsQgJ+aDv\nYfhCxGgpAgMBAAECggEAULGwc1dj5JsWpvciyipg6B0RiORY/xtNmm7pdKWIKJA4\nb/3gxGE7DDs1ze4pg1iT5+JNnsYaIOzKqxIDP5sSxR77eZVHjQXT5Agt8q50gK30\n100u/Y29yljUuF7oA6oRXjPRWXvOjMCNRjBiC4z1h/f1kmcubL0pJ7wmYa+e3Cva\nn/qxqAzgQMAi72bO6q9U+JmIggsTvyr+PAZaRzKP9CqkB5w0TJ5f3cV7mt59Jqz4\nMpYNm98FlmTY8hiAfMuo97kSchjOfDRMtCDvbHaqn6cGFOA+VUuNRMyR3ZCCjyAk\nSuUmH1OIWamzIlgBRqpQb2Gd4FVM7ZlaE0N1FXqXwwKBgQDusphHwYJvqtJfmnbR\nzHcZ+ACr/eeiuRsFCoiDBID/mA/uhKKEhXd1gEIvPZVKMb0kPdnV/AeZfSHg3xiB\n/noFmLJuogPshis0KZClVh7OJIzA8bMbTOAwwCQlzin8ubrWQtZVIVvd4oHVcybe\nawfxf9XzgKRsPpPsTlv7cBc9FwKBgQDmplArjhiv+Ku4WfXKcgaSvI8BbH7LJkQm\nL4k4WR7RmcCjnmj5I8Jzu4y5Yuw2Dd5elqlSzmeSruS9WFLMqkPnSM6cTEcxtalf\ne+80CiF+mo35E2FPviUJo2+Q11tyx0CE9VSj22bu67vsP9omw9rvu+uWCZfuDeg/\nHSHSW+1MvwKBgQCOtirDpBenSftze3eU4elHlnZYXnryWDemYPDTXIr/xduooJZG\nI0IT93YapngunuRV2cD25jNo+l6aAui1N/+efvgXmzg7XtBP5JX9tCrA1ytsZFXQ\nebsEiqxSChwiZK0nU1iwFzzEwZsckjdn/ZgHNIYniv9DVHq+au8lupO6SwKBgQCs\nx82qswmfWQMaWJmdjAmMhqACCwp4mDPY/ycmBOznSuxaJWKxr64NEGP8xDP60izQ\nYsB4/ZHs+gL0LGPqWWoAqjPMNf/nJxS4KJkqPKSWuKS9/1yYZfJM5BfBQvKIaubU\nMwuyq7rSI9lkwvhirbkmeXmjrZAYjmZ6URJzCNYc9QKBgQDTndx7dpG424fpGTup\nE6UbjK3+O9eLVniVEoyTd06pNUmf4eetvgRudR2DEDN4De9RLWWHJjUf56ubqU+3\niygf4XZIV28noE+MdXq1HhTNbDXMMMkKIpjk5T642hxibJn9az/+OpzIY/931nyr\nFpcYXUag8GaBOIRZYn6nX06wgA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "donych@plenary-sentry-240709.iam.gserviceaccount.com",
+  "client_id": "115153101915579825927",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/donych%40plenary-sentry-240709.iam.gserviceaccount.com"
+}
