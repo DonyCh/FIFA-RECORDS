@@ -45,7 +45,7 @@ now = now.replace(" ", "_")
 now = now.replace(":", "")
 
 def wholeApp():
-    players = [" ", "DC", "Moose", "Amos", "Tuti", "Keda", "Berto", "Kevy"]
+    players = [" ", "DC", "Moose", "Amos", "Tuti", "Keda", "Kevy"]
 
     # ---- DB ----
     conn = sqlite3.connect('fifa.db')
