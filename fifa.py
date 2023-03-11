@@ -61,8 +61,8 @@ def wholeApp():
 
 
     # ---- DB ----
-    # conn = sqlite3.connect('fifa21.db', timeout=10.0)
-    conn = sqlite3.connect('fifa21.db')
+    conn = sqlite3.connect('fifa21.db', timeout=10.0)
+    # conn = sqlite3.connect('fifa21.db')
     sql_cursor = conn.cursor()
     #this is the code for the settings
     sql_cursor.execute("""CREATE TABLE IF NOT EXISTS records(
@@ -119,6 +119,20 @@ def wholeApp():
 
     # ---- METHODS ----
     # Define a function to generate a download link for the database file
+    def fix_primary():
+        # Create a new table with the desired schema, including a new primary key column.
+        sql_cursor.execute("""CREATE TABLE new_table (id INTEGER PRIMARY KEY AUTOINCREMENT, Winner text NOT NULL, "Winner's score" text NULL,
+                    "Loser's score" text NOT NULL, Loser text NOT NULL);""")
+
+        # Insert data from the old table into the new table.
+        sql_cursor.execute("""INSERT INTO new_table (Winner, "Winner's score", "Loser's score", Loser) SELECT Winner, "Winner's score", "Loser's score", Loser FROM records;""")
+
+        # Drop the old table.
+        sql_cursor.execute('DROP TABLE records;')
+
+        # Rename the new table to the old table name.
+        sql_cursor.execute('ALTER TABLE new_table RENAME TO records;')
+
     def download_database():
         # Create a BytesIO object and write the database content to it
         data = BytesIO()
@@ -152,9 +166,27 @@ def wholeApp():
 
             # Connect to the SQLite database
             conn = sqlite3.connect('fifa21.db')
+            sql_cursor = conn.cursor()
 
             # Create a table in the database to store the data
             df.to_sql('records', conn, if_exists='replace', index=False)
+
+            sql_cursor.execute('PRAGMA table_info(records)')
+            rows = sql_cursor.fetchall()
+            columns = [col[1] for col in rows]
+
+            # sql_cursor.execute('ALTER TABLE records DROP COLUMN new_table;')
+            # sql_cursor.execute('DROP TABLE new_table;')
+
+            # if 'id' in columns:
+            #     sql_cursor.execute('ALTER TABLE records RENAME COLUMN id TO old_id;')
+
+            # sql_cursor.execute('ALTER TABLE records ADD COLUMN id INTEGER PRIMARY KEY AUTOINCREMENT;')
+            
+            if 'id' in columns:
+                sql_cursor.execute('ALTER TABLE records DROP COLUMN id;')
+
+            fix_primary()
 
             # Close the database connection
             conn.close()
@@ -356,7 +388,7 @@ def wholeApp():
             password = st.text_input("Password")
         with scol:
             # pass
-            if password == "12345":
+            if password == "12354":
                 player_name = st.text_input("Player Name")
                 if st.button("Add Player"):
                     add_player(player_name.strip())
@@ -364,13 +396,13 @@ def wholeApp():
                     remove_player(player_name.strip())
         with focol:
             # Display the download link in the Streamlit app
-            if password == "12345":
+            if password == "12354":
                 download_database()
         with ficol:
-            if password == "12345":
+            if password == "12354":
                 download_excel_file()        
         with sicol:
-            if password == "12345":
+            if password == "12354":
                 upload_excel_file()        
 
 
