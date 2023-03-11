@@ -9,6 +9,7 @@ import os
 import numba
 
 from streamlit import components
+from io import BytesIO
 # from google.oauth2.credentials import Credentials
 # from googleapiclient.discovery import build
 
@@ -34,8 +35,20 @@ from streamlit import components
 # file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 # print(F'File ID: {file.get("id")}')
 
+# Add CSS style to the title
+st.set_page_config(page_title="FIFA 21 Records", page_icon=":bar_chart:", layout="wide")
 
-st.set_page_config(page_title="FIFA 19 Records", page_icon=":bar_chart:", layout="wide")
+st.markdown(
+    f'''
+        <style>
+            div.block-container{{padding-top:{0}rem;}}
+            div.sidebar .sidebar-content{{padding-top:{0}rem;}}
+        </style>
+        ''', unsafe_allow_html=True)
+
+st.markdown(
+            f"<h3 style='text-align: left; color: #CC8899;'>FIFA 21 RECORDS", unsafe_allow_html=True)
+
 
 #GETTING CURRENT DATE
 date_format = "%d/%m/%Y %H:%M"
@@ -45,10 +58,11 @@ now = now.replace(" ", "_")
 now = now.replace(":", "")
 
 def wholeApp():
-    players = [" ", "DC", "Moose", "Amos", "Tuti", "Keda", "Kevy"]
+
 
     # ---- DB ----
-    conn = sqlite3.connect('fifa.db')
+    # conn = sqlite3.connect('fifa21.db', timeout=10.0)
+    conn = sqlite3.connect('fifa21.db')
     sql_cursor = conn.cursor()
     #this is the code for the settings
     sql_cursor.execute("""CREATE TABLE IF NOT EXISTS records(
@@ -59,6 +73,30 @@ def wholeApp():
         Loser text NOT NULL
     )
     """)
+
+    initial_load = sql_cursor.execute("""SELECT name FROM sqlite_master WHERE type='table' AND name='players';""")
+    initial_load = initial_load.fetchone()
+    
+    if initial_load is None:
+        #PLAYERS
+        players = [" ", "DC", "Moose", "Amos", "Tuti", "Keda", "Kevy"]
+        sql_cursor.execute("""CREATE TABLE IF NOT EXISTS players(
+            id integer PRIMARY KEY AUTOINCREMENT,
+            Player text NOT NULL
+        )
+        """)
+
+        sql_cursor.execute("""DELETE FROM players""")
+
+        for x in range(len(players)):
+            sql_cursor.execute(""" INSERT INTO players(Player) VALUES (?)""", (players[x],))
+            # sql_cursor.execute(""" INSERT INTO players (Player)
+            # SELECT @players[x]
+            # WHERE NOT EXISTS (SELECT 1 FROM players);""")
+
+    sql_cursor.execute('SELECT Player FROM players')
+    players = [row[0] for row in sql_cursor.fetchall()]
+    # players
 
     # ---- DF ----
     # columns_records = ['Winner', "Winner's score", "Loser's score", 'Loser']
@@ -75,7 +113,55 @@ def wholeApp():
 
     df_points = pd.DataFrame(columns = columns_points)
 
+    # Read the query results into a DataFrame
+    query = 'SELECT * FROM records'
+    df_records = pd.read_sql_query(query, conn)
+
     # ---- METHODS ----
+    # Define a function to generate a download link for the database file
+    def download_database():
+        # Create a BytesIO object and write the database content to it
+        data = BytesIO()
+        with open('fifa21.db', 'rb') as f:
+            data.write(f.read())
+
+        # Return a download button that the user can click to download the database file
+        return st.download_button(label="Download DB", data=data.getvalue(), file_name="fifa21_d.db")
+
+    # Create an ExcelWriter object with a temporary file path
+    with pd.ExcelWriter('fifa21DB.xlsx', engine='xlsxwriter') as writer:
+        df_records.to_excel(writer, sheet_name='Sheet1', index=False)
+
+    # Define a function to generate a download link for the Excel file
+    def download_excel_file():
+        with open('fifa21DB.xlsx', 'rb') as f:
+            data = f.read()
+        return st.download_button(label="Download Excel", data=data, file_name="fifa21DB.xlsx")
+
+    def upload_excel_file():
+        # if st.button("Upload Excel"):
+        # Create a file uploader in Streamlit
+        uploaded_file = st.file_uploader("Choose an Excel file")
+
+        #     if st.button("Upload"):
+        # If a file was uploaded
+        if uploaded_file is not None:
+
+            # Read the Excel file into a DataFrame
+            df = pd.read_excel(uploaded_file)
+
+            # Connect to the SQLite database
+            conn = sqlite3.connect('fifa21.db')
+
+            # Create a table in the database to store the data
+            df.to_sql('records', conn, if_exists='replace', index=False)
+
+            # Close the database connection
+            conn.close()
+
+            # Show a success message
+            st.success("File uploaded and data inserted into database.")
+
     def save_record(record):
         if record["Winner"] and record["Winner's score"] and record["Loser's score"] and record["Loser"]:
             sql_cursor.execute(""" INSERT INTO records(Winner, "Winner's score", "Loser's score", Loser) VALUES (?,?,?,?)""",
@@ -87,9 +173,19 @@ def wholeApp():
 
     # @st.cache
     def delete_record():    
-            sql_cursor.execute("DELETE FROM records WHERE id = (SELECT MAX(id) FROM records)")
-                                
-            st.write("Record Deleted!")
+        sql_cursor.execute("DELETE FROM records WHERE id = (SELECT MAX(id) FROM records)")                            
+        st.write("Record Deleted!")
+
+    def remove_player(player_name):    
+        # sql_cursor.execute("DELETE FROM players WHERE Player = ?", (player_name,))  
+        sql_cursor.execute("DELETE FROM players WHERE id = (SELECT max(id) FROM players WHERE Player = ?)", (player_name,))                            
+        st.write("Player Removed!")
+
+    def add_player(player_name): 
+        # if player_name:
+        sql_cursor.execute(""" INSERT INTO players(Player) VALUES (?)""", (player_name,))
+        with scol:
+            st.write("Player Added!")
 
     @st.cache
     def color_red(val):
@@ -127,7 +223,6 @@ def wholeApp():
 
     # ---- MAINPAGE ----
     first_name_column, first_score_column, second_score_column, second_name_column = st.columns([0.45, 0.1, 0.1, 0.45])
-    lolo = "sfsf"
     with first_name_column:
         first_name = st.selectbox('Winner', players, index = 0, key = "first_name")
     with first_score_column:
@@ -136,7 +231,6 @@ def wholeApp():
         second_score = st.text_input("Score L")
     with second_name_column:
         second_name = st.selectbox('Loser', players, index = 0, key = "second_name")
-
 
     if st.button("Save record"):
         record = {'Winner': first_name, 
@@ -253,6 +347,32 @@ def wholeApp():
                 # sql_cursor.execute("""DELETE FROM records""")
                 backup_DB()
                 delete_record()                        
+
+    ###SPECIAL BUTTONS
+    specials = st.expander("SIYANA NAZVO")
+    with specials:
+        fcol, scol, tcol, focol, ficol, sicol = st.columns([0.2, 0.1, 0.35, 0.15, 0.15, 0.15])
+        with fcol:
+            password = st.text_input("Password")
+        with scol:
+            # pass
+            if password == "12345":
+                player_name = st.text_input("Player Name")
+                if st.button("Add Player"):
+                    add_player(player_name.strip())
+                if st.button("Remove Player"):
+                    remove_player(player_name.strip())
+        with focol:
+            # Display the download link in the Streamlit app
+            if password == "12345":
+                download_database()
+        with ficol:
+            if password == "12345":
+                download_excel_file()        
+        with sicol:
+            if password == "12345":
+                upload_excel_file()        
+
 
 
 
