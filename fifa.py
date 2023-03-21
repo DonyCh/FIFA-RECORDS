@@ -47,7 +47,7 @@ st.markdown(
         ''', unsafe_allow_html=True)
 
 st.markdown(
-            f"<h3 style='text-align: left; color: #CC8899;'>FIFA 21 RECORDS", unsafe_allow_html=True)
+            f"<h3 style='text-align: left; color: #FEC310;'>FIFA 21 RECORDS", unsafe_allow_html=True)
 
 
 #GETTING CURRENT DATE
@@ -61,8 +61,8 @@ def wholeApp():
 
 
     # ---- DB ----
-    conn = sqlite3.connect('fifa21.db', timeout=10.0)
-    # conn = sqlite3.connect('fifa21.db')
+    conn = sqlite3.connect('fifa22.db', timeout=10.0)
+    # conn = sqlite3.connect('fifa22.db')
     sql_cursor = conn.cursor()
     #this is the code for the settings
     sql_cursor.execute("""CREATE TABLE IF NOT EXISTS records(
@@ -136,21 +136,21 @@ def wholeApp():
     def download_database():
         # Create a BytesIO object and write the database content to it
         data = BytesIO()
-        with open('fifa21.db', 'rb') as f:
+        with open('fifa22.db', 'rb') as f:
             data.write(f.read())
 
         # Return a download button that the user can click to download the database file
-        return st.download_button(label="Download DB", data=data.getvalue(), file_name="fifa21_d.db")
+        return st.download_button(label="Download DB", data=data.getvalue(), file_name="fifa22_d.db")
 
     # Create an ExcelWriter object with a temporary file path
-    with pd.ExcelWriter('fifa21DB.xlsx', engine='xlsxwriter') as writer:
+    with pd.ExcelWriter('fifa22DB.xlsx', engine='xlsxwriter') as writer:
         df_records.to_excel(writer, sheet_name='Sheet1', index=False)
 
     # Define a function to generate a download link for the Excel file
     def download_excel_file():
-        with open('fifa21DB.xlsx', 'rb') as f:
+        with open('fifa22DB.xlsx', 'rb') as f:
             data = f.read()
-        return st.download_button(label="Download Excel", data=data, file_name="fifa21DB.xlsx")
+        return st.download_button(label="Download Excel", data=data, file_name="fifa22DB.xlsx")
 
     def upload_excel_file():
         # if st.button("Upload Excel"):
@@ -165,7 +165,7 @@ def wholeApp():
             df = pd.read_excel(uploaded_file)
 
             # Connect to the SQLite database
-            conn = sqlite3.connect('fifa21.db')
+            conn = sqlite3.connect('fifa22.db')
             sql_cursor = conn.cursor()
 
             # Create a table in the database to store the data
