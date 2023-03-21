@@ -36,7 +36,7 @@ from io import BytesIO
 # print(F'File ID: {file.get("id")}')
 
 # Add CSS style to the title
-st.set_page_config(page_title="FIFA 21 Records", page_icon=":bar_chart:", layout="wide")
+st.set_page_config(page_title="FIFA 22 Records", page_icon=":bar_chart:", layout="wide")
 
 st.markdown(
     f'''
@@ -47,7 +47,7 @@ st.markdown(
         ''', unsafe_allow_html=True)
 
 st.markdown(
-            f"<h3 style='text-align: left; color: #FEC310;'>FIFA 21 RECORDS", unsafe_allow_html=True)
+            f"<h3 style='text-align: left; color: #FEC310;'>FIFA 22 RECORDS", unsafe_allow_html=True)
 
 
 #GETTING CURRENT DATE
