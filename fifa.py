@@ -273,7 +273,7 @@ def wholeApp():
     # BACKUP DB
     @st.cache
     def backup_DB():
-        shutil.copy2('fifa.db', f'db_backups/fifa_{now}.db')
+        shutil.copy2('fifa22.db', f'db_backups/fifa_{now}.db')
 
     # ---- SIDEBAR ----
     # st.sidebar.header("Please Filter Here:")
