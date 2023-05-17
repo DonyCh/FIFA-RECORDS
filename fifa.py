@@ -457,8 +457,8 @@ def wholeApp():
     with foc:
         log_expander = st.expander("THE LOG")
         with log_expander:
-            df_logg = df_points.groupby("Winner", as_index=False)[
-                "Win/Loss", "Goals F/A", "WW F/A"].sum()
+            df_logg = df_points.groupby("Winner", as_index=False)[[
+                "Win/Loss", "Goals F/A", "WW F/A"]].sum()
             df_logg["Total"] = df_logg["Win/Loss"] + \
                 df_logg["Goals F/A"] + df_logg["WW F/A"]
             # df_logg[""] = ""
