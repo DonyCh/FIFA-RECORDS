@@ -6,7 +6,6 @@ import shutil
 import datetime
 import ftplib
 import os
-import numba
 
 from streamlit import components
 from io import BytesIO
