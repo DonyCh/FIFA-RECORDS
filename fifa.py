@@ -324,30 +324,31 @@ def wholeApp():
     with fc:
         pass
     with sc:
-        # Get the current directory
-        current_directory = os.getcwd()
+      pass
+#         # Get the current directory
+#         current_directory = os.getcwd()
 
-        # Specify the folder name within the current directory
-        folder_name = 'db_backups'
+#         # Specify the folder name within the current directory
+#         folder_name = 'db_backups'
 
-        # Create the full path to the folder
-        folder_path = os.path.join(current_directory, folder_name)
+#         # Create the full path to the folder
+#         folder_path = os.path.join(current_directory, folder_name)
 
-        # List all directories and files in the folder
-        items = os.listdir(folder_path)
+#         # List all directories and files in the folder
+#         items = os.listdir(folder_path)
 
-        # Sort the items based on their modification time
-        sorted_items = sorted(items, key=lambda x: os.path.getmtime(os.path.join(folder_path, x)), reverse=True)
+#         # Sort the items based on their modification time
+#         sorted_items = sorted(items, key=lambda x: os.path.getmtime(os.path.join(folder_path, x)), reverse=True)
 
-        # Show only the latest 5 directories and files
-        for item in sorted_items[:5]:
-            item_path = os.path.join(folder_path, item)
-            if os.path.isdir(item_path):
-                item
-                # print('Directory:', item)
-            else:
-                item
-                # print('File:', item)
+#         # Show only the latest 5 directories and files
+#         for item in sorted_items[:5]:
+#             item_path = os.path.join(folder_path, item)
+#             if os.path.isdir(item_path):
+#                 item
+#                 # print('Directory:', item)
+#             else:
+#                 item
+#                 # print('File:', item)
     with tc:
         pass
     with foc:
