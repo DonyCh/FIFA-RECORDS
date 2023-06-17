@@ -226,7 +226,7 @@ def wholeApp():
             st.write("Record Saved. Please do not overclick. Click once then wait!")
             # st.session_state.first_name = players[0]
 
-    # @st.cache_data
+    # @st.cache
     def delete_record():
         sql_cursor.execute(
             "DELETE FROM records WHERE id = (SELECT MAX(id) FROM records)")
@@ -245,13 +245,13 @@ def wholeApp():
         with scol:
             st.write("Player Added!")
 
-    @st.cache_data
+    @st.cache
     def color_red(val):
         color = 'red' if val == 1 else 'black'
         return 'color: %s' % color
 
     # Define the custom function
-    @st.cache_data
+    @st.cache
     def highlight_row(row):
         if row["Winner's score"] > (row["Loser's score"] + 2):
             css = 'background-color: green'
@@ -262,7 +262,7 @@ def wholeApp():
         # is_one = s == 1
         # return ['background-color: lightgreen' if v else '' for v in is_one]
 
-    @st.cache_data
+    @st.cache
     def startIndexAtOne(df):
         # Create a new index
         new_index = [i for i in range(1, 1+len(df))]
@@ -271,7 +271,7 @@ def wholeApp():
         # return df
 
     # BACKUP DB
-    @st.cache_data
+    @st.cache
     def backup_DB():
         shutil.copy2('fifa.db', f'db_backups/fifa_{now}.db')
 
