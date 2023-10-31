@@ -1,5 +1,5 @@
 import pandas as pd  # pip install pandas openpyxl
-# import plotly.express as px  # pip install plotly-express
+import plotly.express as px  # pip install plotly-express
 import streamlit as st  # pip install streamlit
 import sqlite3
 import shutil
@@ -61,6 +61,7 @@ now = now.replace(":", "")
 def wholeApp():
 
     # ---- DB ----
+    # @st.cache_data
     conn = sqlite3.connect('fifa22.db', timeout=10.0)
     # conn = sqlite3.connect('fifa22.db')
     sql_cursor = conn.cursor()
@@ -115,22 +116,13 @@ def wholeApp():
                       "Goals For", "Goals Against", "Goals F/A", "WW For", "WW Against", "WW F/A"]
 
     df_points = pd.DataFrame(columns=columns_points)
-    df_points_all = pd.DataFrame(columns=columns_points)
 
     # Read the query results into a DataFrame
     query = 'SELECT * FROM records'
     df_records = pd.read_sql_query(query, conn)
 
-    # try:
-    #     hide_value = sql_cursor.execute(
-    #         """SELECT AllRecords FROM buttons;""")
-    #     hide_value = hide_value.fetchone()
-    # except:
-    #     hide_value = 1
-
     # ---- METHODS ----
     # Define a function to generate a download link for the database file
-
     def fix_primary():
         # Create a new table with the desired schema, including a new primary key column.
         sql_cursor.execute("""CREATE TABLE new_table (id INTEGER PRIMARY KEY AUTOINCREMENT, Winner text NOT NULL, "Winner's score" text NULL,
@@ -145,16 +137,6 @@ def wholeApp():
 
         # Rename the new table to the old table name.
         sql_cursor.execute('ALTER TABLE new_table RENAME TO records;')
-
-    def change_hide_value_in_db(value):
-        sql_cursor.execute("""CREATE TABLE IF NOT EXISTS buttons(
-            id integer PRIMARY KEY AUTOINCREMENT,
-            AllRecords text NOT NULL
-        )
-        """)
-
-        sql_cursor.execute(
-            """ INSERT INTO buttons(AllRecords) VALUES (?)""", (value,))
 
     def download_database():
         # Create a BytesIO object and write the database content to it
@@ -245,13 +227,13 @@ def wholeApp():
         with scol:
             st.write("Player Added!")
 
-    @st.cache
+    @st.cache_resource
     def color_red(val):
         color = 'red' if val == 1 else 'black'
         return 'color: %s' % color
 
     # Define the custom function
-    @st.cache
+    @st.cache_resource
     def highlight_row(row):
         if row["Winner's score"] > (row["Loser's score"] + 2):
             css = 'background-color: green'
@@ -262,16 +244,16 @@ def wholeApp():
         # is_one = s == 1
         # return ['background-color: lightgreen' if v else '' for v in is_one]
 
-    @st.cache
+    @st.cache_resource
     def startIndexAtOne(df):
         # Create a new index
-        new_index = [i for i in range(1, 1+len(df))]
+        new_index = [i + 1 for i in range(len(df))]
         # Reassign the new index to the DataFrame
         df.index = new_index
         # return df
 
     # BACKUP DB
-    @st.cache
+    @st.cache_data
     def backup_DB():
         shutil.copy2('fifa22.db', f'db_backups/fifa_{now}.db')
 
@@ -296,8 +278,9 @@ def wholeApp():
                   "Winner's score": first_score,
                   "Loser's score": second_score,
                   'Loser': second_name}
-        backup_DB()
         save_record(record)
+        # backup_DB()
+        backupFileToCHR()
 
     # get sqlite db into df
     query = 'SELECT * FROM records'
@@ -317,38 +300,12 @@ def wholeApp():
 
     # df_records.style.applymap(color_red, subset="WW" )
 
-    # filterc = st.columns
-    filter_expander = st.expander("FILTER PLAYERS")
     fc, sc, tc, foc = st.columns([0.45, 0.1, 0.1, 0.45])
     lolo = "sfsf"
     with fc:
         pass
     with sc:
-      pass
-#         # Get the current directory
-#         current_directory = os.getcwd()
-
-#         # Specify the folder name within the current directory
-#         folder_name = 'db_backups'
-
-#         # Create the full path to the folder
-#         folder_path = os.path.join(current_directory, folder_name)
-
-#         # List all directories and files in the folder
-#         items = os.listdir(folder_path)
-
-#         # Sort the items based on their modification time
-#         sorted_items = sorted(items, key=lambda x: os.path.getmtime(os.path.join(folder_path, x)), reverse=True)
-
-#         # Show only the latest 5 directories and files
-#         for item in sorted_items[:5]:
-#             item_path = os.path.join(folder_path, item)
-#             if os.path.isdir(item_path):
-#                 item
-#                 # print('Directory:', item)
-#             else:
-#                 item
-#                 # print('File:', item)
+        pass
     with tc:
         pass
     with foc:
@@ -410,59 +367,6 @@ def wholeApp():
                     new_df = pd.DataFrame([record])
                     df_points = pd.concat(
                         [df_points, new_df], axis=0, ignore_index=True)
-
-                    # # FOR ALL RECORDS
-                    # if hide_value == 0:
-                    #     df_filtered_all = df_records[(df_records["Winner"].isin([winner, loser])) & (
-                    #         df_records["Loser"].isin([winner, loser]))]
-
-                    #     with sc:
-                    #         pass
-                    #         # winner
-                    #         # loser
-                    #         # leng = len(df_filtered_all)
-                    #         # leng
-                    #         # df_filtered_all
-                    #         # df_filtered_all[0:10]    #.iloc[0:10]
-                    #         # exit()
-
-                    #     wins = len(
-                    #         df_filtered_all[df_filtered_all["Winner"] == winner])
-                    #     losses = len(df_filtered_all) - wins
-                    #     WL_RATIO = wins / (losses if losses != 0 else 1)
-
-                    #     goals_for = (df_filtered_all[df_filtered_all["Winner"] == winner]["Winner's score"].astype(int)).sum(
-                    #     ) + (df_filtered_all[df_filtered_all["Loser"] == winner]["Loser's score"].astype(int)).sum()
-                    #     goals_against = (df_filtered_all[df_filtered_all["Winner"] == loser]["Winner's score"].astype(
-                    #         int)).sum() + (df_filtered_all[df_filtered_all["Loser"] == loser]["Loser's score"].astype(int)).sum()
-                    #     goals_FA = goals_for / \
-                    #         (goals_against if goals_against != 0 else 1)
-
-                    #     WW_for = df_filtered_all[(df_filtered_all["Winner"] == winner) & (
-                    #         df_filtered_all["WW"] == 1)]["WW"].sum()
-                    #     WW_against = df_filtered_all[(df_filtered_all["Winner"] == loser) & (
-                    #         df_filtered_all["WW"] == 1)]["WW"].sum()
-                    #     WW_FA = WW_for/(WW_against if WW_against > 0 else 1)
-
-                    #     record = ({
-                    #         'Winner': winner,
-                    #         "Wins": wins,
-                    #         'Loser': loser,
-                    #         "Losses": losses,
-                    #         "Win/Loss": WL_RATIO,
-                    #         "Goals F/A": goals_FA,
-                    #         "Goals For": goals_for,
-                    #         "Goals Against": goals_against,
-                    #         "WW F/A": WW_FA,
-                    #         "WW For": WW_for,
-                    #         "WW Against": WW_against,
-                    #     })
-
-                    #     # print(record)
-
-                    #     new_df = pd.DataFrame([record])
-                    #     df_points_all = pd.concat(
-                    #         [df_points_all, new_df], axis=0, ignore_index=True)
         goals_FA
 
     # df_log
@@ -470,13 +374,6 @@ def wholeApp():
     with player_vs_player_expander:
         startIndexAtOne(df_points)
         df_points
-
-    # if hide_value == 0:
-    #     player_vs_player_expander_all = st.expander(
-    #         "ALL PLAYER VS PLAYER RECORDS")
-    #     with player_vs_player_expander_all:
-    #         startIndexAtOne(df_points_all)
-    #         df_points_all
 
     with foc:
         log_expander = st.expander("THE LOG")
@@ -487,26 +384,17 @@ def wholeApp():
                 df_logg["Goals F/A"] + df_logg["WW F/A"]
             # df_logg[""] = ""
             # df_logg["/50"] = df_logg[df_logg["Winner"] == df_logg["Win/Loss"]] df_points[df_points["Winner"] == df_logg["Win/Loss"]].sum()
-            df_logg.sort_values(by=['Total'], ascending=False,  inplace=True)
-            df_logg.reset_index(drop=True, inplace=True)
-            df_logg.index += 1
-            # startIndexAtOne(df_logg)
+            df_logg = df_logg.sort_values(by=['Total'], ascending=False)
+            startIndexAtOne(df_logg)
             df_logg
 
     # Apply the custom function to the DataFrame
     df_records.drop(['WW'], axis=1, inplace=True)
-
-    with filter_expander:
-        selected_players = st.multiselect(
-            'Select players:', players, default=players)
+    styled_df_records = df_records.style.apply(highlight_row, axis=1)
 
     with fc:
         all_records_expander = st.expander("ALL RECORDS")
         with all_records_expander:
-            df_records = df_records[(df_records["Winner"].isin(
-                selected_players)) & (df_records["Loser"].isin(
-                    selected_players))]
-            styled_df_records = df_records.style.apply(highlight_row, axis=1)
             styled_df_records
             if st.button("Delete last record"):
                 # sql_cursor.execute("""DELETE FROM records""")
@@ -521,22 +409,13 @@ def wholeApp():
         with fcol:
             password = st.text_input("Password")
         with scol:
+            # pass
             if password == "12354":
                 player_name = st.text_input("Player Name")
                 if st.button("Add Player"):
                     add_player(player_name.strip())
                 if st.button("Remove Player"):
                     remove_player(player_name.strip())
-        # with tcol:
-        #     if hide_value == 0:
-        #         if st.button("Hide All Records"):
-        #             change_hide_value_in_db(1)
-        #     elif hide_value == 1:
-        #         if st.button("Unhide All Records"):
-        #             change_hide_value_in_db(0)
-        #     else:
-                if st.button("Initiate Hide Button"):
-                    change_hide_value_in_db(0)
         with focol:
             # Display the download link in the Streamlit app
             if password == "12354":
@@ -551,6 +430,24 @@ def wholeApp():
     conn.commit()
     conn.close()
 
+import requests
+base_url = "https://ndasenda.creativehr.site/api/"
+
+def backupFileToCHR():
+    session = requests.Session()
+
+    url = f"{base_url}fif"
+
+    current_time = datetime.datetime.now()
+    formatted_time = current_time.strftime("%Y%m%d%H%M")
+    headers = {}
+    # headers = {"Authorization": f"Bearer {bearer_token}"}
+    files = {
+        'file': (f'{formatted_time}_fifa22DB', open('fifa22.db', 'rb'))
+    }
+    response = session.post(url, headers=headers, files=files)
+
+    return {"response":response, "filename":formatted_time}
 
 wholeApp()
 
